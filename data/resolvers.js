@@ -26,6 +26,7 @@ const resolvers = {
   Mutation: {
     createMessage(parent, {sender, message}, { pubsub }) {
       const date = new Date();
+      console.log('DATE: ', date);
       const newChatAdded = {
         id: '_' + Date.now(),
         created: date.toLocaleString(),
