@@ -1,0 +1,30 @@
+{
+  "name": "graphql-chat-server",
+  "version": "1.0.0",
+  "description": "Simple apollo server for our chat app",
+  "main": "index.js",
+  "repository": "https://github.com/bijay007/chat_app.git",
+  "author": "Bijay Timilsina <bjtimi.007@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "build": "webpack -p --config webpack.config.js --progress --profile --colors",
+    "start": "node dist/server.js"
+  },
+  "dependencies": {
+    "chalk": "^2.4.2",
+    "graphql-yoga": "^1.17.4"
+  },
+  "devDependencies": {
+    "babel-core": "^6.26.3",
+    "babel-loader": "^7.1.4",
+    "babel-preset-env": "^1.7.0",
+    "webpack": "^4.28.4",
+    "webpack-cli": "^3.0.8",
+    "webpack-node-externals": "^1.7.2"
+  },
+  "engines": {
+    "node": "10.15.0",
+    "npm": "6.4.1",
+    "yarn": "1.13.0"
+  }
+}

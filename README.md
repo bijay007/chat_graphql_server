@@ -1,0 +1,1 @@
+# Simple graphQL server for the frontend chat app - https://github.com/bijay007/chat_app
