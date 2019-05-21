@@ -11,6 +11,7 @@ const resolvers = {
   Query: {
     getMockChat: () => {
       const date = new Date();
+      console.log('DATE ORGINAL: ', date);
       const mockChat = {
         id: '_' + Date.now(),
         created: date.toLocaleString(),
@@ -26,7 +27,6 @@ const resolvers = {
   Mutation: {
     createMessage(parent, {sender, message}, { pubsub }) {
       const date = new Date();
-      console.log('DATE: ', date);
       const newChatAdded = {
         id: '_' + Date.now(),
         created: date.toLocaleString(),
