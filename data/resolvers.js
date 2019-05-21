@@ -1,6 +1,7 @@
 // Contains function that resolve the graph queries, mutations and subscriptions
 
 import chalk from 'chalk';
+import dayjs from 'dayjs'
 import pubsub from './pubsub';
 
 // defaults
@@ -26,10 +27,9 @@ const resolvers = {
   Mutation: {
     createMessage(parent, {sender, message}, { pubsub }) {
       const date = new Date();
-      console.log('DATE ORGINAL: ', date);
       const newChatAdded = {
         id: '_' + Date.now(),
-        created: date.toLocaleString(),
+        created: dayjs(date).format('D MMM, HH:mm A'),
         sender, message
       }
       chatsArr.push(newChatAdded);
