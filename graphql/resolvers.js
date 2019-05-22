@@ -20,8 +20,10 @@ const resolvers = {
         sender: 'Bijay',
         message: 'Hope this works :D'
       })
-      mockChat.save((err, data) => dbLogger('SAVE', err, data));
       console.log(`${chalk.green.bold('QUERY : getChats')} : TRIGGERED`)
+      process.env.HOSTNAME === 'localhost'
+        ? mockChat.save((err, data) => dbLogger('SAVE', err, data))
+        : null
       return mockChat;
     },
     getChats: () => ChatModel.find(dbLogger.bind(null, 'FIND'))
