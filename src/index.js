@@ -1,12 +1,14 @@
-const { GraphQLServer } = require('graphql-yoga')
+import { GraphQLServer } from 'graphql-yoga';
 
 // utils
-import pubsub from '../data/pubsub';
+import pubsub from '../graphql/pubsub';
 import chalk from 'chalk';
 import config from '../config';
-
-import resolvers from '../data/resolvers'
-import typeDefs from '../data/typeDefs'
+// graphql
+import resolvers from '../graphql/resolvers'
+import typeDefs from '../graphql/typeDefs'
+// database
+import connectToDB from '../database/connection';
 
 // Create apollo server
 const gqlServer = new GraphQLServer({
@@ -15,4 +17,5 @@ const gqlServer = new GraphQLServer({
   context: { pubsub }
 })
 
+connectToDB();
 gqlServer.start(config, () => console.log(chalk.red.bold(`Server is running on port ${config.port}`)))
