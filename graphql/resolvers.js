@@ -24,7 +24,7 @@ const resolvers = {
       console.log(`${chalk.green.bold('QUERY : getChats')} : TRIGGERED`)
       return mockChat;
     },
-    getChats: () => ChatModel.find((err, data) => dbLogger('FIND', err, data))
+    getChats: () => ChatModel.find(dbLogger.bind(null, 'FIND'))
   },
 
   Mutation: {
@@ -35,9 +35,14 @@ const resolvers = {
         created: dayjs(date).format('D MMM, HH:mm A'),
         sender, message
       })
-      ChatModel.save(newChatAdded, dbLogger.bind(null, 'SAVE'));
-      pubsub.publish('CHAT_CHANNEL', { getMessage: newChatAdded });
       console.log(`${chalk.green.bold('MUTATION : createMessage')} : TRIGGERED`)
+      ChatModel.save(newChatAdded)
+        .then((err, data) => {
+          console.log('Data sent to db: ', newChatAdded);
+          console.log('Data saved in db: ', data);
+          dbLogger('SAVE', err, data);
+          pubsub.publish('CHAT_CHANNEL', { getMessage: newChatAdded });
+        })
       return newChatAdded;
     }
   },
