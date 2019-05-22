@@ -37,11 +37,7 @@ const resolvers = {
       })
       console.log(`${chalk.green.bold('MUTATION : createMessage')} : TRIGGERED`)
       newChatAdded.save()
-        .then(data => {
-          console.log('Data sent to db: ', newChatAdded);
-          console.log('Data saved in db: ', data);
-          pubsub.publish('CHAT_CHANNEL', { getMessage: newChatAdded });
-        })
+        .then(data => pubsub.publish('CHAT_CHANNEL', { getMessage: data }))
         .catch(err => console.log('Error saving to db: ', err))
       return newChatAdded;
     }
