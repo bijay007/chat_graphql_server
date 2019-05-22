@@ -36,7 +36,7 @@ const resolvers = {
         sender, message
       })
       console.log(`${chalk.green.bold('MUTATION : createMessage')} : TRIGGERED`)
-      ChatModel.save(newChatAdded)
+      newChatAdded.save()
         .then((err, data) => {
           console.log('Data sent to db: ', newChatAdded);
           console.log('Data saved in db: ', data);
