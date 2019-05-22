@@ -4,35 +4,38 @@ import chalk from 'chalk';
 import dayjs from 'dayjs'
 import pubsub from './pubsub';
 
-// defaults
-const chatsArr = [];
+// db
+import { ChatModel } from '../database/schema';
+import dbLogger from '../helpers/logger';
+
 const CHAT_SUBSCRIPTION_CHANNEL = 'CHAT_CHANNEL';
 
 const resolvers = {
   Query: {
     getMockChat: () => {
       const date = new Date();
-      const mockChat = {
+      const mockChat = new ChatModel({
         id: '_' + Date.now(),
         created: date.toLocaleString(),
         sender: 'Bijay',
         message: 'Hope this works :D'
-      }
+      })
+      mockChat.save((err, data) => dbLogger('SAVE', err, data));
       console.log(`${chalk.green.bold('QUERY : getChats')} : TRIGGERED`)
-      return mockChat
+      return mockChat;
     },
-    getChats: () => chatsArr
+    getChats: () => ChatModel.find((err, data) => dbLogger('FIND', err, data))
   },
 
   Mutation: {
     createMessage(parent, {sender, message}, { pubsub }) {
       const date = new Date();
-      const newChatAdded = {
+      const newChatAdded = new ChatModel({
         id: '_' + Date.now(),
         created: dayjs(date).format('D MMM, HH:mm A'),
         sender, message
-      }
-      chatsArr.push(newChatAdded);
+      })
+      ChatModel.save(newChatAdded, dbLogger.bind(null, 'SAVE'));
       pubsub.publish('CHAT_CHANNEL', { getMessage: newChatAdded });
       console.log(`${chalk.green.bold('MUTATION : createMessage')} : TRIGGERED`)
       return newChatAdded;
