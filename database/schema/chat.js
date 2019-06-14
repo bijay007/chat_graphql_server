@@ -5,6 +5,7 @@ const Schema = mongoose.Schema;
 const chatSchema = new Schema({
   id: { type: String },
   senderId: { type: String },
+  senderName: { type: String },
   message: { type: String },
   created: { type: String }
 })

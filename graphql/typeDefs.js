@@ -10,17 +10,19 @@ const typeDefs = `
     id: ID!
     created: String!
     senderId: ID!
+    senderName: String!
     message: String!
   }
   type Query {
     getMockChat: Chat,
     getMockUser: User,
     getChats: [Chat],
-    getUsers: [User]
+    getUsers: [User],
+    getUser(senderName: String!): User
   }
   type Mutation {
     createUser(name: String!, email: String!): User,
-    createMessage(senderId: ID!, message: String!): Chat
+    createMessage(senderId: ID!, senderName: String!, message: String!): Chat
   }
   type Subscription {
     getMessage: Chat

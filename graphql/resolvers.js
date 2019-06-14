@@ -10,6 +10,7 @@ import UserModel from '../database/schema/user';
 import dbLogger from '../helpers/logger';
 
 const CHAT_SUBSCRIPTION_CHANNEL = 'CHAT_CHANNEL';
+const findUser = nameField => ChatModel.findOne(nameField);
 
 const resolvers = {
   Query: {
@@ -19,6 +20,7 @@ const resolvers = {
         id: '_' + Date.now(),
         created: date.toLocaleString(),
         senderId: '_' + Math.random().toString(36).substr(2, 9),
+        senderName: 'Bijay',
         message: 'Hope this works :D'
       })
       console.log(`${chalk.green.bold('QUERY : getMockChat')} : TRIGGERED`)
@@ -38,6 +40,7 @@ const resolvers = {
             id: 'random_unique_id',
             created: 'just now',
             senderId: mockUserId,
+            senderName: 'Bijay',
             message: 'Message from me to myself'
           }
         ]
@@ -45,17 +48,22 @@ const resolvers = {
       console.log(`${chalk.green.bold('QUERY : getMockUser')} : TRIGGERED`)
       return mockUser;
     },
+    getUser: (_, arg) => {
+      findOne({senderName: arg.senderName})
+        .then(data => data)
+        .catch(err => console.log('error finding field: ', err))
+    },
     getChats: () => ChatModel.find(dbLogger.bind(null, 'FIND')),
     getUsers: () => UserModel.find(dbLogger.bind(null, 'FIND'))
   },
 
   Mutation: {
-    createMessage(parent, {senderId, message}, { pubsub }) {
+    createMessage(parent, {senderId, senderName, message}, { pubsub }) {
       const date = new Date();
       const newChatAdded = new ChatModel({
         id: '_' + Date.now(),
         created: dayjs(date).format('D MMM, HH:mm A'),
-        senderId, message
+        senderId, senderName, message
       })
       console.log(`${chalk.green.bold('MUTATION : createMessage')} : TRIGGERED`)
       newChatAdded.save()
