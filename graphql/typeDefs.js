@@ -18,7 +18,7 @@ const typeDefs = `
     getMockUser: User,
     getChats: [Chat],
     getUsers: [User],
-    getUser(senderName: String!): User
+    getUser(userName: String!): User
   }
   type Mutation {
     createUser(name: String!, email: String!): User,

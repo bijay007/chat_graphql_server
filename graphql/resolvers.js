@@ -10,7 +10,6 @@ import UserModel from '../database/schema/user';
 import dbLogger from '../helpers/logger';
 
 const CHAT_SUBSCRIPTION_CHANNEL = 'CHAT_CHANNEL';
-const findUser = nameField => ChatModel.findOne(nameField);
 
 const resolvers = {
   Query: {
@@ -49,9 +48,7 @@ const resolvers = {
       return mockUser;
     },
     getUser: (_, arg) => {
-      findOne({senderName: arg.senderName})
-        .then(data => data)
-        .catch(err => console.log('error finding field: ', err))
+      return UserModel.findOne({ name: arg.name }).then(data => data)
     },
     getChats: () => ChatModel.find(dbLogger.bind(null, 'FIND')),
     getUsers: () => UserModel.find(dbLogger.bind(null, 'FIND'))
