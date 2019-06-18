@@ -48,7 +48,12 @@ const resolvers = {
       return mockUser;
     },
     getUser: (_, arg) => {
-      return UserModel.findOne({ name: arg.name }).then(data => data)
+      return new Promise((resolve, reject) => {
+        UserModel.findOne({ name: arg.userName }, (err, data) => {
+          if (err) reject(err);
+          resolve(data);
+        })
+      })
     },
     getChats: () => ChatModel.find(dbLogger.bind(null, 'FIND')),
     getUsers: () => UserModel.find(dbLogger.bind(null, 'FIND'))
@@ -68,11 +73,8 @@ const resolvers = {
         .catch(err => console.log('Error saving to db: ', err))
       return newChatAdded;
     },
-    createUser(parent, {name, email}) {
-      const newUserAdded = new UserModel({
-        id: '_' + Date.now(),
-        name, email
-      })
+    createUser(parent, {name, email, id}) {
+      const newUserAdded = new UserModel({ name, email, id })
       console.log(`${chalk.green.bold('MUTATION : createUser')} : TRIGGERED`)
       newUserAdded.save()
         .then(data => console.log(`User '${chalk.green.bold(name)}' added to the database`))
