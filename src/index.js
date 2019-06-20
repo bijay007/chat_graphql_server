@@ -1,9 +1,9 @@
 import { GraphQLServer } from 'graphql-yoga';
 
 // utils
+import config from '../config';
 import pubsub from '../graphql/pubsub';
 import chalk from 'chalk';
-import config from '../config';
 // graphql
 import resolvers from '../graphql/resolvers'
 import typeDefs from '../graphql/typeDefs'

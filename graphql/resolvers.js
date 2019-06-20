@@ -73,13 +73,20 @@ const resolvers = {
         .catch(err => console.log('Error saving to db: ', err))
       return newChatAdded;
     },
-    createUser(parent, {name, email, id}) {
-      const newUserAdded = new UserModel({ name, email, id })
-      console.log(`${chalk.green.bold('MUTATION : createUser')} : TRIGGERED`)
-      newUserAdded.save()
-        .then(data => console.log(`User '${chalk.green.bold(name)}' added to the database`))
-        .catch(err => console.log('Error saving to db: ', err))
-      return newUserAdded;
+    createUser(parent, { name, email, password, id }) {
+      const checkIfUserExists = UserModel.findOne({ email });
+      return checkIfUserExists.then(data => {
+        if (data) {
+          throw new Error('A user with the email already exists');
+        }
+        const newUserAdded = new UserModel({ name, email, password, id })
+        console.log(`${chalk.green.bold('MUTATION : createUser')} : TRIGGERED`)
+        newUserAdded.save()
+          .then(data => console.log(`User '${chalk.green.bold(name)}' added to the database`))
+          .catch(err => console.log('Error saving to db: ', err))
+        return newUserAdded;
+      })
+      .catch(err => err);
     }
   },
 

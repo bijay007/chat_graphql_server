@@ -7,6 +7,7 @@ const userSchema = new Schema({
   id: { type: String },
   name: { type: String },
   email: { type: String },
+  password: { type: String },
   chats: { type: [ChatModel.schema] }
 })
 

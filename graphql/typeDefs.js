@@ -21,7 +21,7 @@ const typeDefs = `
     getUser(userName: String!): User
   }
   type Mutation {
-    createUser(name: String!, email: String!, id: ID!): User,
+    createUser(name: String!, email: String!, password: String!, id: ID!): User,
     createMessage(senderId: ID!, senderName: String!, message: String!): Chat
   }
   type Subscription {
