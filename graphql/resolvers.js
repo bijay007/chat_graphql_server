@@ -1,7 +1,8 @@
 // Contains function that resolve the graph queries, mutations and subscriptions
 
 import chalk from 'chalk';
-import dayjs from 'dayjs'
+import dayjs from 'dayjs';
+import bcrypt from 'bcrypt';
 
 // db
 import ChatModel from '../database/schema/chat';
@@ -46,13 +47,12 @@ const resolvers = {
       console.log(`${chalk.green.bold('QUERY : getMockUser')} : TRIGGERED`)
       return mockUser;
     },
-    getUser: (_, arg) => {
-      return new Promise((resolve, reject) => {
-        UserModel.findOne({ name: arg.userName }, (err, data) => {
-          if (err) reject(err);
-          resolve(data);
-        })
-      })
+    getUser: async (_, args) => {
+      const user = await UserModel.findOne({ name: args.userName });
+      if (!user) throw new Error('User doesn\'t exist.');
+      const validPassword = await bcrypt.compare(args.password, user.password);
+      if (!validPassword) throw new Error('Invalid username or password');
+      return user;
     },
     getChats: () => ChatModel.find(dbLogger.bind(null, 'FIND')),
     getUsers: () => UserModel.find(dbLogger.bind(null, 'FIND'))
@@ -73,19 +73,15 @@ const resolvers = {
       return newChatAdded;
     },
     async createUser(parent, { name, email, id, password }) {
-      const checkIfUserExists = UserModel.findOne({ email });
-      return checkIfUserExists.then(data => {
-        if (data) {
-          throw new Error('A user with the email already exists');
-        }
-        const newUserAdded = new UserModel({ name, email, password, id })
-        console.log(`${chalk.green.bold('MUTATION : createUser')} : TRIGGERED`)
-        newUserAdded.save()
-          .then(data => console.log(`User '${chalk.green.bold(name)}' added to the database`))
-          .catch(err => console.log('Error saving to db: ', err))
-        return newUserAdded;
-      })
-      .catch(err => err);
+      const userExists = await UserModel.findOne({ email });
+      const hashedPassword = await bcrypt.hash(password, 10);
+      if (userExists) throw new Error('A user with the email already exists');
+      const newUserAdded = new UserModel({ name, email, password: hashedPassword, id })
+      console.log(`${chalk.green.bold('MUTATION : createUser')} : TRIGGERED`)
+      newUserAdded.save()
+        .then(data => console.log(`User '${chalk.green.bold(name)}' added to the database`))
+        .catch(err => console.log('Error saving to db: ', err))
+      return newUserAdded;
     }
   },
 

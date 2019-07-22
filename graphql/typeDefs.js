@@ -18,7 +18,7 @@ const typeDefs = `
     getMockUser: User,
     getChats: [Chat],
     getUsers: [User],
-    getUser(userName: String!): User
+    getUser(userName: String!, password: String!): User
   }
   type Mutation {
     createUser(name: String!, email: String!, password: String!, id: ID!): User,

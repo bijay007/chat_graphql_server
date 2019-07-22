@@ -10,6 +10,9 @@ import typeDefs from '../graphql/typeDefs'
 // database
 import connectToDB from '../database/connection';
 
+// Connect to database
+connectToDB();
+
 // Create apollo server
 const gqlServer = new GraphQLServer({
   typeDefs,
@@ -18,5 +21,4 @@ const gqlServer = new GraphQLServer({
   middlewares: []
 })
 
-connectToDB();
 gqlServer.start(config, () => console.log(chalk.red.bold(`Server is running on port ${config.port}`)))
