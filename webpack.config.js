@@ -3,22 +3,20 @@ const nodeExternals = require('webpack-node-externals');
 
 module.exports = {
   target: "node",
-  entry: {
-    server: path.join(__dirname, 'src/index.js')
-  },
+  entry: [
+    'regenerator-runtime/runtime',
+    './src/index.js'
+  ],
   output: {
     path: path.join(__dirname, 'dist/'),
-    filename: '[name].js'
+    filename: 'server.js'
   },
   module: {
     rules: [
       {
         test: /\.js$/,
         use: {
-          loader: 'babel-loader',
-          options: {
-            presets: ['env']
-          }
+          loader: 'babel-loader'
         },
       },
     ]

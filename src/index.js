@@ -14,7 +14,8 @@ import connectToDB from '../database/connection';
 const gqlServer = new GraphQLServer({
   typeDefs,
   resolvers,
-  context: { pubsub }
+  context: { pubsub },
+  middlewares: []
 })
 
 connectToDB();

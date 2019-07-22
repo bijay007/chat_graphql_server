@@ -2,7 +2,6 @@
 
 import chalk from 'chalk';
 import dayjs from 'dayjs'
-import pubsub from './pubsub';
 
 // db
 import ChatModel from '../database/schema/chat';
@@ -73,7 +72,7 @@ const resolvers = {
         .catch(err => console.log('Error saving to db: ', err))
       return newChatAdded;
     },
-    createUser(parent, { name, email, password, id }) {
+    async createUser(parent, { name, email, id, password }) {
       const checkIfUserExists = UserModel.findOne({ email });
       return checkIfUserExists.then(data => {
         if (data) {
