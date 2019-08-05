@@ -8,7 +8,7 @@
   "license": "MIT",
   "scripts": {
     "build": "webpack -p --config webpack.config.js --progress --profile --colors",
-    "start": "node dist/server.js",
+    "start": "npm serve && node dist/server.js",
     "serve": "npm run build && npm run start"
   },
   "dependencies": {
