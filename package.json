@@ -28,12 +28,9 @@
     "webpack-cli": "^3.0.8",
     "webpack-node-externals": "^1.7.2"
   },
-  "babel": {
-    "presets": [
-      "@babel/preset-env"
-    ]
-  },
   "engines": {
-    "npm": "6.4.1"
+    "node": "10.15.0",
+    "npm": "6.4.1",
+    "yarn": "1.13.0"
   }
 }
