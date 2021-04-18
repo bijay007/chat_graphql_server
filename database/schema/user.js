@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import ChatModel from './chat';
+import PublicChatModel from './chats/publicChat';
 
 const Schema = mongoose.Schema;
 // User schema and model
@@ -8,7 +8,7 @@ const userSchema = new Schema({
   name: { type: String },
   email: { type: String },
   password: { type: String },
-  chats: { type: [ChatModel.schema] }
+  chats: { type: [PublicChatModel.schema] }
 })
 
 const UserModel = mongoose.model('user', userSchema);

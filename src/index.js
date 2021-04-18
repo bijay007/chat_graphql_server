@@ -1,15 +1,15 @@
 import "regenerator-runtime/runtime";
 import { GraphQLServer } from 'graphql-yoga';
+import connectToDB from '../database/connection';
 
 // utils
 import config from '../config';
 import pubsub from '../graphql/pubsub';
 import chalk from 'chalk';
+
 // graphql
 import resolvers from '../graphql/resolvers'
-import typeDefs from '../graphql/typeDefs'
-// database
-import connectToDB from '../database/connection';
+import typeDefs from '../graphql/typeDefs';
 
 // Connect to database
 connectToDB();
@@ -22,4 +22,5 @@ const gqlServer = new GraphQLServer({
   middlewares: []
 })
 
+// start graphql-express server
 gqlServer.start(config, () => console.log(chalk.red.bold(`Server is running on port ${config.port}`)))

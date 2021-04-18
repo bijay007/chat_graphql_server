@@ -5,28 +5,47 @@ import dayjs from 'dayjs';
 import bcrypt from 'bcrypt';
 
 // db
-import ChatModel from '../database/schema/chat';
+import PublicChatModel from '../database/schema/chats/publicChat';
+import PrivateChatModel from '../database/schema/chats/privateChat';
 import UserModel from '../database/schema/user';
 import dbLogger from '../helpers/logger';
 
-const CHAT_SUBSCRIPTION_CHANNEL = 'CHAT_CHANNEL';
+const PUBLIC_CHAT_SUBSCRIPTION_CHANNEL = 'PUBLIC_CHAT_CHANNEL';
+const PRIVATE_CHAT_SUBSCRIPTION_CHANNEL = 'PRIVATE_CHAT_CHANNEL';
 
 const resolvers = {
   Query: {
-    getMockChat: () => {
+    getPublicMockChat: () => {
       const date = new Date();
-      const mockChat = new ChatModel({
+      const publicMockChat = new PublicChatModel({
         id: '_' + Date.now(),
         created: date.toLocaleString(),
         senderId: '_' + Math.random().toString(36).substr(2, 9),
-        senderName: 'Bijay',
-        message: 'Hope this works :D'
+        senderName: 'Administrator',
+        message: 'This is a test message !!'
       })
-      console.log(`${chalk.green.bold('QUERY : getMockChat')} : TRIGGERED`)
+      console.log(`${chalk.green.bold('QUERY : getPublicMockChat')} : TRIGGERED`)
       process.env.HOSTNAME === 'localhost'
-        ? mockChat.save((err, data) => dbLogger('SAVE', err, data))
+        ? publicMockChat.save((err, data) => dbLogger('SAVE', err, data))
         : null
-      return mockChat;
+      return publicMockChat;
+    },
+    getPrivateMockChat: (_, args) => {
+      const date = new Date();
+      const privateMockChat = new PrivateChatModel({
+        id: '_' + Date.now(),
+        created: date.toLocaleString(),
+        senderId: '_' + Math.random().toString(36).substr(2, 9),
+        senderName: args.senderName,
+        receiverId: '_' + Math.random().toString(36).substr(2, 9),
+        receiverName: args.receiverName,
+        message: 'Hope only you see this message :D'
+      })
+      console.log(`${chalk.green.bold('QUERY : getPrivateMockChat')} : TRIGGERED`)
+      process.env.HOSTNAME === 'localhost'
+        ? privateMockChat.save((err, data) => dbLogger('SAVE', err, data))
+        : null
+      return privateMockChat;
     },
     getMockUser: () => {
       const mockUserId = '_' + Math.random().toString(36).substr(2, 9);
@@ -54,19 +73,22 @@ const resolvers = {
       if (!validPassword) throw new Error('Invalid username or password');
       return user;
     },
-    getChats: () => ChatModel.find(dbLogger.bind(null, 'FIND')),
+    getPublicChats: () => PublicChatModel.find(dbLogger.bind(null, 'FIND')),
     getUsers: () => UserModel.find(dbLogger.bind(null, 'FIND'))
   },
 
   Mutation: {
-    createMessage(parent, {senderId, senderName, message}, { pubsub }) {
+    createPublicMessage(parent, {senderId, senderName, message}, { pubsub }) {
+/*       receiverId
+        ? this.createPublicMessage()
+        : this.createOneToOneMessage() */
       const date = new Date();
-      const newChatAdded = new ChatModel({
+      const newChatAdded = new PublicChatModel({
         id: '_' + Date.now(),
         created: dayjs(date).format('D MMM, HH:mm A'),
         senderId, senderName, message
       })
-      console.log(`${chalk.green.bold('MUTATION : createMessage')} : TRIGGERED`)
+      console.log(`${chalk.green.bold('MUTATION : createPublicMessage')} : TRIGGERED`)
       newChatAdded.save()
         .then(data => pubsub.publish('CHAT_CHANNEL', { getMessage: data }))
         .catch(err => console.log('Error saving to db: ', err))
@@ -86,10 +108,10 @@ const resolvers = {
   },
 
   Subscription: {
-    getMessage: {
+    getPublicMessage: {
       subscribe: (parent, args, { pubsub }) => {
-        console.log(`${chalk.green.bold('SUBSCRIPTION : getMessage')} : TRIGGERED`)
-        return pubsub.asyncIterator(CHAT_SUBSCRIPTION_CHANNEL)
+        console.log(`${chalk.green.bold('SUBSCRIPTION : getPublicMessage')} : TRIGGERED`)
+        return pubsub.asyncIterator(PUBLIC_CHAT_SUBSCRIPTION_CHANNEL)
       }
     }
   }
