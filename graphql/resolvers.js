@@ -18,37 +18,37 @@ const resolvers = {
     getPublicMockChat: () => {
       const date = new Date();
       const publicMockChat = new PublicChatModel({
-        id: '_' + Date.now(),
+        id: `_${Date.now()}`,
         created: date.toLocaleString(),
-        senderId: '_' + Math.random().toString(36).substr(2, 9),
+        senderId: `_${Math.random().toString(36).substr(2, 9)}`,
         senderName: 'Administrator',
-        message: 'This is a test message !!'
-      })
-      console.log(`${chalk.green.bold('QUERY : getPublicMockChat')} : TRIGGERED`)
+        message: 'This is a test message !!',
+      });
+      console.log(`${chalk.green.bold('QUERY : getPublicMockChat')} : TRIGGERED`);
       process.env.HOSTNAME === 'localhost'
         ? publicMockChat.save((err, data) => dbLogger('SAVE', err, data))
-        : null
+        : null;
       return publicMockChat;
     },
     getPrivateMockChat: (_, args) => {
       const date = new Date();
       const privateMockChat = new PrivateChatModel({
-        id: '_' + Date.now(),
+        id: `_${Date.now()}`,
         created: date.toLocaleString(),
-        senderId: '_' + Math.random().toString(36).substr(2, 9),
+        senderId: `_${Math.random().toString(36).substr(2, 9)}`,
         senderName: args.senderName,
-        receiverId: '_' + Math.random().toString(36).substr(2, 9),
+        receiverId: `_${Math.random().toString(36).substr(2, 9)}`,
         receiverName: args.receiverName,
-        message: 'Hope only you see this message :D'
-      })
-      console.log(`${chalk.green.bold('QUERY : getPrivateMockChat')} : TRIGGERED`)
+        message: 'Hope only you see this message :D',
+      });
+      console.log(`${chalk.green.bold('QUERY : getPrivateMockChat')} : TRIGGERED`);
       process.env.HOSTNAME === 'localhost'
         ? privateMockChat.save((err, data) => dbLogger('SAVE', err, data))
-        : null
+        : null;
       return privateMockChat;
     },
     getMockUser: () => {
-      const mockUserId = '_' + Math.random().toString(36).substr(2, 9);
+      const mockUserId = `_${Math.random().toString(36).substr(2, 9)}`;
       const mockUser = new UserModel({
         id: mockUserId,
         name: 'Bijay',
@@ -59,11 +59,11 @@ const resolvers = {
             created: 'just now',
             senderId: mockUserId,
             senderName: 'Bijay',
-            message: 'Message from me to myself'
-          }
-        ]
+            message: 'Message from me to myself',
+          },
+        ],
       });
-      console.log(`${chalk.green.bold('QUERY : getMockUser')} : TRIGGERED`)
+      console.log(`${chalk.green.bold('QUERY : getMockUser')} : TRIGGERED`);
       return mockUser;
     },
     getUser: async (_, args) => {
@@ -74,47 +74,53 @@ const resolvers = {
       return user;
     },
     getPublicChats: () => PublicChatModel.find(dbLogger.bind(null, 'FIND')),
-    getUsers: () => UserModel.find(dbLogger.bind(null, 'FIND'))
+    getUsers: () => UserModel.find(dbLogger.bind(null, 'FIND')),
   },
 
   Mutation: {
-    createPublicMessage(parent, {senderId, senderName, message}, { pubsub }) {
-/*       receiverId
+    createPublicMessage(parent, { senderId, senderName, message }, { pubsub }) {
+      /*       receiverId
         ? this.createPublicMessage()
         : this.createOneToOneMessage() */
       const date = new Date();
       const newChatAdded = new PublicChatModel({
-        id: '_' + Date.now(),
+        id: `_${Date.now()}`,
         created: dayjs(date).format('D MMM, HH:mm A'),
-        senderId, senderName, message
-      })
-      console.log(`${chalk.green.bold('MUTATION : createPublicMessage')} : TRIGGERED`)
+        senderId,
+        senderName,
+        message,
+      });
+      console.log(`${chalk.green.bold('MUTATION : createPublicMessage')} : TRIGGERED`);
       newChatAdded.save()
-        .then(data => pubsub.publish('CHAT_CHANNEL', { getMessage: data }))
-        .catch(err => console.log('Error saving to db: ', err))
+        .then((data) => pubsub.publish('CHAT_CHANNEL', { getMessage: data }))
+        .catch((err) => console.log('Error saving to db: ', err));
       return newChatAdded;
     },
-    async createUser(parent, { name, email, id, password }) {
+    async createUser(parent, {
+      name, email, id, password,
+    }) {
       const userExists = await UserModel.findOne({ email });
       const hashedPassword = await bcrypt.hash(password, 10);
       if (userExists) throw new Error('A user with the email already exists');
-      const newUserAdded = new UserModel({ name, email, password: hashedPassword, id })
-      console.log(`${chalk.green.bold('MUTATION : createUser')} : TRIGGERED`)
+      const newUserAdded = new UserModel({
+        name, email, password: hashedPassword, id,
+      });
+      console.log(`${chalk.green.bold('MUTATION : createUser')} : TRIGGERED`);
       newUserAdded.save()
-        .then(data => console.log(`User '${chalk.green.bold(name)}' added to the database`))
-        .catch(err => console.log('Error saving to db: ', err))
+        .then((data) => console.log(`User '${chalk.green.bold(name)}' added to the database`))
+        .catch((err) => console.log('Error saving to db: ', err));
       return newUserAdded;
-    }
+    },
   },
 
   Subscription: {
     getPublicMessage: {
       subscribe: (parent, args, { pubsub }) => {
-        console.log(`${chalk.green.bold('SUBSCRIPTION : getPublicMessage')} : TRIGGERED`)
-        return pubsub.asyncIterator(PUBLIC_CHAT_SUBSCRIPTION_CHANNEL)
-      }
-    }
-  }
-}
+        console.log(`${chalk.green.bold('SUBSCRIPTION : getPublicMessage')} : TRIGGERED`);
+        return pubsub.asyncIterator(PUBLIC_CHAT_SUBSCRIPTION_CHANNEL);
+      },
+    },
+  },
+};
 
 export default resolvers;

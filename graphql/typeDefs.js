@@ -1,4 +1,4 @@
-// Contains the schema for the Chat object as well as the 3 major graphql operations on this Chat data
+// Contains the schema for the Chat object as well as the 3 major graphql operations on it
 const typeDefs = `
   type User {
     id: ID!
@@ -27,5 +27,5 @@ const typeDefs = `
   type Subscription {
     getMessage: Chat
   }
-`
+`;
 export default typeDefs;

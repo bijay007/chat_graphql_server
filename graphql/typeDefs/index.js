@@ -7,8 +7,8 @@ const userTypedefs = require('./user.js');
 const listTypeDefs = [
   publicChatTypedefs,
   privateChatTypedefs,
-  userTypedefs
-]
+  userTypedefs,
+];
 const typeDefs = mergeTypeDefs(listTypeDefs);
 
 export default typeDefs;
