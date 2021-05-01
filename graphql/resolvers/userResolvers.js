@@ -4,7 +4,7 @@ import chalk from 'chalk';
 import bcrypt from 'bcrypt';
 
 // db
-import UserModel from '/database/schema/user';
+import UserModel from '/database/schema/user/user';
 import dbLogger from '/helpers/logger';
 
 const userResolvers = {
@@ -15,15 +15,26 @@ const userResolvers = {
         id: mockUserId,
         name: 'Bijay',
         email: 'bjtimi.007@gmail.com',
-        chats: [
+        publicChats: [
           {
             id: 'random_unique_id',
             created: 'just now',
             senderId: mockUserId,
             senderName: 'Bijay',
-            message: 'Message from me to myself',
+            message: 'Hello eveyone',
           },
         ],
+        privateChats: [
+          {
+            id: 'unique id generated using sender and receiver ids',
+            senderId: mockUserId,
+            senderName: 'Bijay',
+            receiverId: 'abc123',
+            receiverName: 'Bijay v2',
+            message: 'Hello myself :)',
+            created: 'sometime in the future from a parallel universe'
+          }
+        ]
       });
       console.log(`${chalk.green.bold('QUERY : getMockUser')} : TRIGGERED`);
       return mockUser;

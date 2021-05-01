@@ -4,8 +4,8 @@ import chalk from 'chalk';
 import dayjs from 'dayjs';
 
 // db
-import PublicChatModel from '/database/schema/chats/publicChat';
-import PrivateChatModel from '/database/schema/chats/privateChat';
+import PublicChatModel from '/database/schema/chat/publicChat';
+import PrivateChatModel from '/database/schema/chat/privateChat';
 import dbLogger from '/helpers/logger';
 
 const PUBLIC_CHAT_SUBSCRIPTION_CHANNEL = 'PUBLIC_CHAT_CHANNEL';
@@ -49,12 +49,9 @@ const chatResolvers = {
   },
 
   Mutation: {
-    createPublicMessage(parent, { senderId, senderName, message }, { pubsub }) {
-      /*       receiverId
-        ? this.createPublicMessage()
-        : this.createOneToOneMessage() */
+    createPublicMessage(parent, { senderId, senderName, message }, { pubsub }) { // TODO: Refactor to use helper function that creates chat based on params
       const date = new Date();
-      const newChatAdded = new PublicChatModel({
+      const newPublicChat = new PublicChatModel({
         id: `_${Date.now()}`,
         created: dayjs(date).format('D MMM, HH:mm A'),
         senderId,
@@ -62,10 +59,27 @@ const chatResolvers = {
         message,
       });
       console.log(`${chalk.green.bold('MUTATION : createPublicMessage')} : TRIGGERED`);
-      newChatAdded.save()
-        .then((data) => pubsub.publish('CHAT_CHANNEL', { getMessage: data }))
+      newPublicChat.save()
+        .then((data) => pubsub.publish('PUBLIC_CHAT_CHANNEL', { getMessage: data }))
         .catch((err) => console.log('Error saving to db: ', err));
-      return newChatAdded;
+      return newPublicChat;
+    },
+    createPrivateMessage(parent, { senderId, senderName, receiverId, receiverName, message }, { pubsub }) {
+      const date = new Date();
+      const newPrivateChat = new PrivateChatModel({
+        id: `_${Date.now()}`,
+        created: dayjs(date).format('D MMM, HH:mm A'),
+        senderId,
+        senderName,
+        receiverId,
+        receiverName,
+        message,
+      });
+      console.log(`${chalk.green.bold('MUTATION : createPrivateMessage')} : TRIGGERED`);
+      newPrivateChat.save()
+        .then((data) => pubsub.publish('PRIVATE_CHAT_CHANNEL', { getMessage: data }))
+        .catch((err) => console.log('Error saving to db: ', err));
+      return newPrivateChat;
     }
   },
 
@@ -74,6 +88,12 @@ const chatResolvers = {
       subscribe: (parent, args, { pubsub }) => {
         console.log(`${chalk.green.bold('SUBSCRIPTION : getPublicMessage')} : TRIGGERED`);
         return pubsub.asyncIterator(PUBLIC_CHAT_SUBSCRIPTION_CHANNEL);
+      }
+    },
+    getPrivateMessage: {
+      subscribe: (parent, args, { pubsub }) => {
+        console.log(`${chalk.green.bold('SUBSCRIPTION : getPrivateMessage')} : TRIGGERED`);
+        return pubsub.asyncIterator(PRIVATE_CHAT_SUBSCRIPTION_CHANNEL);
       }
     }
   }

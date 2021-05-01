@@ -4,7 +4,8 @@ module.exports = `
     id: ID!
     name: String!
     email: String!
-    chats: [PublicChat]
+    publicChats: [PublicChat]
+    privateChats: [PrivateChat]
   }
   type Query {
     getMockUser: User,
