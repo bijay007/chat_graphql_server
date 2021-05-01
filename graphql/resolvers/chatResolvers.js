@@ -49,7 +49,7 @@ const chatResolvers = {
   },
 
   Mutation: {
-    createPublicMessage(parent, { senderId, senderName, message }, { pubsub }) { // TODO: Refactor to use helper function that creates chat based on params
+    createPublicChat(parent, { senderId, senderName, message }, { pubsub }) { // TODO: Refactor to use helper function that creates chat based on params
       const date = new Date();
       const newPublicChat = new PublicChatModel({
         id: `_${Date.now()}`,
@@ -58,13 +58,13 @@ const chatResolvers = {
         senderName,
         message,
       });
-      console.log(`${chalk.green.bold('MUTATION : createPublicMessage')} : TRIGGERED`);
+      console.log(`${chalk.green.bold('MUTATION : createPublicChat')} : TRIGGERED`);
       newPublicChat.save()
-        .then((data) => pubsub.publish('PUBLIC_CHAT_CHANNEL', { getMessage: data }))
+        .then((data) => pubsub.publish('PUBLIC_CHAT_CHANNEL', { getPublicChats: data }))
         .catch((err) => console.log('Error saving to db: ', err));
       return newPublicChat;
     },
-    createPrivateMessage(parent, { senderId, senderName, receiverId, receiverName, message }, { pubsub }) {
+    createPrivateChat(parent, { senderId, senderName, receiverId, receiverName, message }, { pubsub }) {
       const date = new Date();
       const newPrivateChat = new PrivateChatModel({
         id: `_${Date.now()}`,
@@ -75,24 +75,24 @@ const chatResolvers = {
         receiverName,
         message,
       });
-      console.log(`${chalk.green.bold('MUTATION : createPrivateMessage')} : TRIGGERED`);
+      console.log(`${chalk.green.bold('MUTATION : createPrivateChat')} : TRIGGERED`);
       newPrivateChat.save()
-        .then((data) => pubsub.publish('PRIVATE_CHAT_CHANNEL', { getMessage: data }))
+        .then((data) => pubsub.publish('PRIVATE_CHAT_CHANNEL', { getPrivateChats: data }))
         .catch((err) => console.log('Error saving to db: ', err));
       return newPrivateChat;
     }
   },
 
   Subscription: {
-    getPublicMessage: {
+    getPublicChats: {
       subscribe: (parent, args, { pubsub }) => {
-        console.log(`${chalk.green.bold('SUBSCRIPTION : getPublicMessage')} : TRIGGERED`);
+        console.log(`${chalk.green.bold('SUBSCRIPTION : getPublicChats')} : TRIGGERED`);
         return pubsub.asyncIterator(PUBLIC_CHAT_SUBSCRIPTION_CHANNEL);
       }
     },
-    getPrivateMessage: {
+    getPrivateChats: {
       subscribe: (parent, args, { pubsub }) => {
-        console.log(`${chalk.green.bold('SUBSCRIPTION : getPrivateMessage')} : TRIGGERED`);
+        console.log(`${chalk.green.bold('SUBSCRIPTION : getPrivateChats')} : TRIGGERED`);
         return pubsub.asyncIterator(PRIVATE_CHAT_SUBSCRIPTION_CHANNEL);
       }
     }

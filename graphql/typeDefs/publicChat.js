@@ -11,9 +11,9 @@ module.exports = `
     getPublicChats: [PublicChat],
   }
   type Mutation {
-    createPublicMessage(senderId: ID!, senderName: String!, message: String!): PublicChat
+    createPublicChat(senderId: ID!, senderName: String!, message: String!): PublicChat
   }
   type Subscription {
-    getPublicMessage: PublicChat,
+    getPublicChats: PublicChat,
   }
 `;

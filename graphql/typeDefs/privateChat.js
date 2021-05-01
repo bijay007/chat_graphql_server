@@ -13,11 +13,11 @@ module.exports = `
     getPrivateChats: [PrivateChat],
   }
   type Mutation {
-    createPrivateMessage(senderId: ID!, senderName: String!,
+    createPrivateChat(senderId: ID!, senderName: String!,
       receiverId: String!, receiverName: String!, message: String!
     ): PrivateChat
   }
   type Subscription {
-    getPrivateMessage: PrivateChat
+    getPrivateChats: PrivateChat
   }
 `;
