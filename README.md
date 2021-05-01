@@ -1,7 +1,7 @@
 # Simple graphQL server for the [frontend chat app](https://github.com/bijay007/chat_react_client)
 To run the app locally on port 4000, you just need to run the following scripts (written in bold)
 -   **yarn** - installs all dependencies
--   **yarn serve** (build the app package and serves it from the local dist folder)
+-   **yarn serve** - build the app package and serves it from the local dist folder
 
 This app was build with **graphql-yoga**. Main reasons being:
 - Build on-top of express (node based web-server)
