@@ -45,7 +45,8 @@ const chatResolvers = {
         : null;
       return privateMockChat;
     },
-    getPublicChats: () => PublicChatModel.find(dbLogger.bind(null, 'FIND'))
+    getPublicChats: () => PublicChatModel.find(dbLogger.bind(null, 'FIND')),
+    getPrivateChats: () => PrivateChatModel.find(dbLogger.bind(null, 'FIND'))
   },
 
   Mutation: {
